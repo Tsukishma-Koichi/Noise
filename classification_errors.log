@@ -1,0 +1,428 @@
+
+[2025-04-23T20:19:40.579992] 分类错误
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 109, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 131, in _api_classify
+    return self._process_response(response, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 162, in _process_response
+    print(f"API状态码: {response.status_code}")
+                        ^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\.venv\Lib\site-packages\pydantic\main.py", line 994, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'ChatCompletion' object has no attribute 'status_code'
+
+        
+[2025-04-23T20:27:00.404324] 分类错误
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 109, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 131, in _api_classify
+    return self._process_response(response, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 162, in _process_response
+    print(f"API状态码: {response.status_code}")
+                        ^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\.venv\Lib\site-packages\pydantic\main.py", line 994, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'ChatCompletion' object has no attribute 'status_code'
+
+        
+[2025-04-27T21:27:55.991857] 分类错误
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 109, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 131, in _api_classify
+    return self._process_response(response, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 162, in _process_response
+    print(f"API状态码: {response.status_code}")
+                        ^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\.venv\Lib\site-packages\pydantic\main.py", line 994, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'ChatCompletion' object has no attribute 'status_code'
+
+        
+[2025-04-27T21:31:31.177254] 分类错误
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 113, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 135, in _api_classify
+    return self._process_response(response, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 166, in _process_response
+    print(f"API状态码: {response.status_code}")
+                        ^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\.venv\Lib\site-packages\pydantic\main.py", line 994, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'ChatCompletion' object has no attribute 'status_code'
+
+        
+[2025-05-06T12:11:08.626807] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 146, in _process_response
+    result = json.loads(content)
+             ^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 104, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 140, in _api_classify
+    return self._process_response(response, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 148, in _process_response
+    raise ValueError(f"无效响应格式: {content[:200]}...")
+ValueError: 无效响应格式: ```json
+{
+    "classification": "non-steady",
+    "confidence": 0.95,
+    "reason": "主频标准差(225.92Hz)远高于50Hz的稳态阈值，且能量变化标准差(4.14dB)超过3dB标准。频谱平坦度极低(9.34e-05)表明能量集中在窄带频段，但大幅频率波动和能量波动仍符合非稳态噪声定义。"
+}
+```...
+
+        
+[2025-05-06T12:17:13.824508] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 104, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 112, in _api_classify
+    self._validate_request(features)
+  File "E:\Pycharm\Noise\main.py", line 191, in _validate_request
+    result["confidence"] = round(float(result["confidence"]), 2)
+                                       ^^^^^^
+NameError: name 'result' is not defined
+
+        
+[2025-05-06T12:20:57.151821] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 104, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 112, in _api_classify
+    self._validate_request(features)
+  File "E:\Pycharm\Noise\main.py", line 200, in _validate_request
+    result["confidence"] = round(float(result["confidence"]), 2)
+                                       ^^^^^^
+NameError: name 'result' is not defined
+
+        
+[2025-05-06T12:21:13.446590] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 104, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 112, in _api_classify
+    self._validate_request(features)
+  File "E:\Pycharm\Noise\main.py", line 200, in _validate_request
+    result["confidence"] = round(float(result["confidence"]), 2)
+                                       ^^^^^^
+NameError: name 'result' is not defined
+
+        
+[2025-05-06T19:37:45.606851] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 105, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 144, in _api_classify
+    return self._process_response(response, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 173, in _process_response
+    return self._validate_result(result, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 189, in _validate_result
+    raise ValueError("频谱平坦度数据异常")
+ValueError: 频谱平坦度数据异常
+
+        
+[2025-05-06T19:38:26.186249] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 105, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 144, in _api_classify
+    return self._process_response(response, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 173, in _process_response
+    return self._validate_result(result, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 189, in _validate_result
+    raise ValueError("频谱平坦度数据异常")
+ValueError: 频谱平坦度数据异常
+
+        
+[2025-05-06T19:51:58.245675] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 108, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 147, in _api_classify
+    return self._process_response(response, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 176, in _process_response
+    return self._validate_result(result, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 192, in _validate_result
+    raise ValueError("频谱平坦度数据异常")
+ValueError: 频谱平坦度数据异常
+
+        
+[2025-05-08T19:37:57.077829] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 108, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 147, in _api_classify
+    return self._process_response(response, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 176, in _process_response
+    return self._validate_result(result, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 192, in _validate_result
+    raise ValueError("频谱平坦度数据异常")
+ValueError: 频谱平坦度数据异常
+
+        
+[2025-05-08T20:40:12.901051] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 137, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 149, in _api_classify
+    {json.dumps(features, indent=2, ensure_ascii=False)}
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "D:\Python\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Python\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type float32 is not JSON serializable
+
+        
+[2025-05-08T23:42:50.492752] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\test.py", line 137, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\test.py", line 149, in _api_classify
+    {json.dumps(features, indent=2, ensure_ascii=False)}
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "D:\Python\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Python\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type float32 is not JSON serializable
+
+        
+[2025-05-08T23:44:52.107064] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\test.py", line 137, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\test.py", line 149, in _api_classify
+    {json.dumps(features, indent=2, ensure_ascii=False)}
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "D:\Python\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Python\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type float32 is not JSON serializable
+
+        
+[2025-05-08T23:45:35.102969] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\test.py", line 137, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\test.py", line 149, in _api_classify
+    {json.dumps(features, indent=2, ensure_ascii=False)}
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "D:\Python\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Python\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type float32 is not JSON serializable
+
+        
+[2025-05-08T23:46:14.265690] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\test.py", line 137, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\test.py", line 149, in _api_classify
+    {json.dumps(features, indent=2, ensure_ascii=False)}
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "D:\Python\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Python\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type float32 is not JSON serializable
+
+        
+[2025-05-08T23:51:05.028416] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\test.py", line 150, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\test.py", line 162, in _api_classify
+    {json.dumps(features, indent=2, ensure_ascii=False)}
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "D:\Python\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Python\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type float32 is not JSON serializable
+
+        
+[2025-05-09T00:14:01.024369] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\test.py", line 150, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\test.py", line 162, in _api_classify
+    {json.dumps(features, indent=2, ensure_ascii=False)}
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "D:\Python\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Python\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type float32 is not JSON serializable
+
+        
+[2025-05-09T13:39:15.083163] 错误详情
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 119, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 131, in _api_classify
+    {json.dumps(features, indent=2, ensure_ascii=False)}
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "D:\Python\Lib\json\encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "D:\Python\Lib\json\encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "D:\Python\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type float32 is not JSON serializable
+
+        
+[2025-05-09T13:47:30.982860] 错误详情
+类型: NameError
+信息: name 're' is not defined
+追踪:
+Traceback (most recent call last):
+  File "E:\Pycharm\Noise\main.py", line 133, in classify
+    return self._api_classify(features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 181, in _api_classify
+    return self._process_response(response, features)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Pycharm\Noise\main.py", line 188, in _process_response
+    if match := re.search(r'```json(.*?)```', content, re.DOTALL):
+                ^^
+NameError: name 're' is not defined. Did you forget to import 're'
+
+        
