@@ -4,12 +4,12 @@ import queue
 import time
 import numpy as np
 import sounddevice as sd
-import keyboard
 from scipy.signal import lfilter, iirnotch, lfilter_zi
 from collections import deque
 import matplotlib
+import keyboard
 
-matplotlib.use('TkAgg')
+matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.font_manager import FontProperties
@@ -41,124 +41,122 @@ class RealTimeProcessor:
             "reference": None
         }
 
-        # 图形初始化
+        # 图形系统初始化
         self._init_plot()
-        self.plot_queue = queue.Queue(maxsize=5)
-        self.ani = None
 
     def _init_fonts(self):
         """安全初始化中文字体"""
         try:
             font_path = os.path.abspath('fonts/simhei.ttf')
-            if not os.path.exists(font_path):
-                raise FileNotFoundError(f"字体文件未找到: {font_path}")
-
-            self.font = FontProperties(fname=font_path)
-            plt.rcParams['font.sans-serif'] = [self.font.get_name()]
-            plt.rcParams['axes.unicode_minus'] = False
+            if os.path.exists(font_path):
+                self.font = FontProperties(fname=font_path)
+            else:
+                self.font = FontProperties(family='SimHei')
         except Exception as e:
             print(f"字体初始化警告: {str(e)}")
-            plt.rcParams['font.sans-serif'] = ['SimHei']
-            plt.rcParams['axes.unicode_minus'] = False
+            self.font = FontProperties(family='SimHei')
+
+        plt.rcParams['font.sans-serif'] = [self.font.get_name()]
+        plt.rcParams['axes.unicode_minus'] = False
 
     def _init_plot(self):
-        """增强的图形初始化"""
+        """图形系统初始化"""
         plt.ioff()
         self.fig, self.ax = plt.subplots(figsize=(10, 4))
 
-        # 创建图形元素
+        # 初始化曲线
         self.line, = self.ax.plot([], [], 'g-', lw=1, label='瞬时SNR')
         self.avg_line = self.ax.axhline(0, color='r', ls='--', label='平均SNR')
 
-        # 设置中文标签
+        # 坐标轴配置
+        self.ax.set_xlim(0, 10)
+        self.ax.set_ylim(-5, 5)
         self.ax.set_xlabel('时间 (秒)', fontproperties=self.font)
         self.ax.set_ylabel('SNR (dB)', fontproperties=self.font)
-
-        # 配置图例
-        self.ax.legend(prop=self.font, loc='upper right')
-
-        # 初始坐标范围
-        self.ax.set_xlim(0, 10)
-        self.ax.set_ylim(-10, 50)
+        self.ax.legend(prop=self.font)
         self.ax.grid(True, alpha=0.3)
 
+        # 初始化动画
+        self.ani = FuncAnimation(
+            self.fig,
+            self._animate_update,
+            interval=50,
+            blit=False,
+            cache_frame_data=False
+        )
+
         plt.ion()
-        self.fig.show()  # 预显示窗口
+        self.plot_queue = queue.Queue(maxsize=5)
 
     def _animate_update(self, frame):
-        """动画帧更新函数"""
+        """动画更新函数"""
         try:
-            if not self.plot_queue.empty():
-                times, snrs, avg = self.plot_queue.get()
+            times, snrs, avg = self.plot_queue.get_nowait()
 
-                # 更新曲线数据
-                self.line.set_data(np.array(times) - times[-1] + 10, snrs)
-                self.avg_line.set_ydata([avg] * 2)
+            # 更新曲线数据
+            self.line.set_data(times, snrs)
+            self.avg_line.set_ydata([avg, avg])
 
-                # 自动调整坐标范围
-                if len(times) > 1:
-                    self.ax.set_xlim(max(0, times[-1] - 10), max(10, times[-1]))
-                    self.ax.figure.canvas.draw()
-        except Exception as e:
-            pass
-        return self.line, self.avg_line
+            # 动态调整坐标
+            if len(times) > 0:
+                current_time = times[-1]
+                self.ax.set_xlim(max(0, current_time - 10), current_time + 0.1)
+                min_snr = min(snrs) - 2 if len(snrs) > 0 else -5
+                max_snr = max(snrs) + 2 if len(snrs) > 0 else 5
+                self.ax.set_ylim(min_snr, max_snr)
+
+            self.fig.canvas.draw_idle()
+            return self.line, self.avg_line
+        except queue.Empty:
+            return self.line, self.avg_line
 
     def audio_callback(self, indata, frames, time, status):
         """音频输入回调"""
         if status:
             print(f"音频流异常: {status}")
-        if self.running:
-            try:
-                self.audio_buffer.put_nowait(indata.copy())
-            except queue.Full:
-                pass
+        if self.running and not self.audio_buffer.full():
+            self.audio_buffer.put(indata.copy())
 
     def processing_loop(self):
         """实时处理主循环"""
-        try:
-            time_counter = 0
-            last_update = time.time()
+        time_counter = 0.0
+        last_update = time.time()
 
-            while self.running:
-                # 获取数据块
-                try:
-                    data = self.audio_buffer.get(timeout=0.5)
-                except queue.Empty:
-                    continue
+        while self.running:
+            try:
+                # 获取音频数据
+                data = self.audio_buffer.get(timeout=0.5)
+                chunk = data.flatten()
 
                 # 处理数据
-                chunk = data.flatten()
                 filtered = self._apply_filter(chunk)
                 current_snr = self._calculate_snr(chunk, filtered)
                 time_counter += len(chunk) / self.fs
 
-                # 更新历史数据
+                # 记录数据
                 self.snr_history.append((time_counter, current_snr))
 
-                # 定时更新显示队列
+                # 更新图形队列
                 if time.time() - last_update >= self.update_interval:
-                    try:
-                        self.plot_queue.put_nowait((
-                            [t for t, _ in self.snr_history],
-                            [s for _, s in self.snr_history],
-                            np.mean([s for _, s in self.snr_history]) if self.snr_history else 0
-                        ))
-                    except queue.Full:
-                        pass
+                    times = [t for t, _ in self.snr_history]
+                    snrs = [s for _, s in self.snr_history]
+                    avg = np.mean(snrs) if snrs else 0
+
+                    if not self.plot_queue.full():
+                        self.plot_queue.put((times.copy(), snrs.copy(), avg))
                     last_update = time.time()
 
-        except Exception as e:
-            print(f"处理线程异常: {str(e)}")
-            self.stop()
-
-    # 保持滤波和信号处理方法不变（_apply_filter, _notch_filter等）
+            except queue.Empty:
+                continue
+            except Exception as e:
+                print(f"处理异常: {str(e)}")
+                self.stop()
 
     def _apply_filter(self, chunk):
-        """应用当前滤波器（新增关键方法）"""
+        """应用当前滤波器"""
         if self.filter_type == "steady":
             return self._notch_filter(chunk)
-        else:
-            return self._lms_filter(chunk)
+        return self._lms_filter(chunk)
 
     def _notch_filter(self, chunk):
         """陷波滤波器实现"""
@@ -199,50 +197,33 @@ class RealTimeProcessor:
         return freqs[np.argmax(fft)]
 
     def _calculate_snr(self, original, processed):
-        """实时SNR计算方法（新增关键方法）"""
+        """SNR计算方法"""
         noise = original - processed
         signal_power = np.mean(original ** 2)
         noise_power = np.mean(noise ** 2)
-
-        # 数值稳定性处理
         eps = 1e-12
         return 10 * np.log10((signal_power + eps) / (noise_power + eps))
 
     def start(self):
-        """启动实时处理系统"""
+        """启动系统"""
         if self.running:
             return
 
         self.running = True
 
-        # 启动动画
-        self.ani = FuncAnimation(
-            self.fig,
-            self._animate_update,
-            interval=50,
-            blit=False,
-            cache_frame_data=False
-        )
-
-        # 启动音频处理线程
-        self.audio_thread = threading.Thread(
-            target=self._audio_stream_loop,
-            daemon=True
-        )
-        self.audio_thread.start()
-
         # 启动处理线程
-        self.process_thread = threading.Thread(
-            target=self.processing_loop,
-            daemon=True
-        )
+        self.process_thread = threading.Thread(target=self.processing_loop, daemon=True)
         self.process_thread.start()
 
+        # 启动音频流
+        self.audio_thread = threading.Thread(target=self._audio_stream_loop, daemon=True)
+        self.audio_thread.start()
+
         # 显示图形界面
-        plt.show(block=True)  # 阻塞主线程直到窗口关闭
+        plt.show(block=True)
 
     def _audio_stream_loop(self):
-        """音频流专用线程"""
+        """音频流线程"""
         try:
             with sd.InputStream(
                     samplerate=self.fs,
@@ -254,31 +235,24 @@ class RealTimeProcessor:
                 while self.running:
                     if keyboard.is_pressed('q'):
                         self.stop()
-                    time.sleep(0.01)
+                    time.sleep(0.1)
         except Exception as e:
             self.stop()
 
     def stop(self):
-        """增强的资源释放方法"""
+        """停止系统"""
         if not self.running:
             return
 
         self.running = False
 
-        # 停止动画
-        if self.ani:
-            self.ani.event_source.stop()
-
-        # 关闭图形窗口
+        # 关闭图形
         if plt.fignum_exists(self.fig.number):
             plt.close(self.fig)
 
         # 等待线程结束
-        threads = []
-        for t in [self.audio_thread, self.process_thread]:
-            if t and t.is_alive() and t is not threading.current_thread():
+        for t in [self.process_thread, self.audio_thread]:
+            if t and t.is_alive():
                 t.join(timeout=1)
-                threads.append(t)
 
-        print(f"已停止 {len(threads)} 个工作线程")
-        print("系统已完全停止")
+        print("系统已安全停止")
