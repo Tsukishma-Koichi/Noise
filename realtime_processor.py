@@ -12,6 +12,9 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from matplotlib import rcParams
+rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'WenQuanYi Zen Hei']  # 设置中文字体列表
+rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
 
 class RealTimeProcessor:
@@ -37,8 +40,8 @@ class RealTimeProcessor:
             "reference": None
         }
 
-        # 图形系统
-        self._init_plot()
+        # 数据通信
+        self.plot_queue = queue.Queue(maxsize=8)
 
     def _init_fonts(self):
         """安全初始化中文字体"""
@@ -122,13 +125,13 @@ class RealTimeProcessor:
         return self.raw_line, self.proc_line, self.avg_line
 
     def audio_callback(self, indata, frames, time, status):
-        """音频输入回调"""
+        """音频输入回调（线程安全）"""
         if status:
             print(f"音频输入异常: {status}")
         if self.running and not self.audio_buffer.full():
             self.audio_buffer.put(indata.copy())
 
-    def processing_loop(self):
+    def processing_loop(self, update_callback):
         """主处理循环"""
         time_counter = 0.0
         last_update = time.time()
@@ -151,7 +154,7 @@ class RealTimeProcessor:
                 self.raw_snr_history.append((time_counter, raw_snr))
                 self.proc_snr_history.append((time_counter, proc_snr))
 
-                # 定期更新显示
+                # 定期触发界面更新
                 if time.time() - last_update >= self.update_interval:
                     raw_t = [t for t, _ in self.raw_snr_history]
                     raw_s = [s for _, s in self.raw_snr_history]
@@ -168,6 +171,7 @@ class RealTimeProcessor:
                             avg
                         ))
                     last_update = time.time()
+                    update_callback()  # 触发主线程更新
 
             except queue.Empty:
                 continue
@@ -237,8 +241,8 @@ class RealTimeProcessor:
         noise_power = np.mean(residual ** 2)
         return 10 * np.log10((sig_power + 1e-12) / (noise_power + 1e-12))
 
-    def start(self):
-        """启动系统"""
+    def start(self, update_callback):
+        """启动处理系统"""
         if self.running:
             return
 
@@ -247,6 +251,7 @@ class RealTimeProcessor:
         # 启动处理线程
         self.process_thread = threading.Thread(
             target=self.processing_loop,
+            args=(update_callback,),
             daemon=True
         )
         self.process_thread.start()
@@ -258,10 +263,6 @@ class RealTimeProcessor:
         )
         self.audio_thread.start()
 
-        # 显示界面
-        plt.tight_layout()
-        plt.show(block=True)
-
     def _audio_stream_loop(self):
         """音频流线程"""
         try:
@@ -271,37 +272,20 @@ class RealTimeProcessor:
                     channels=1,
                     callback=self.audio_callback
             ):
-                print("实时降噪已启动 | 按 Q 键停止 | 瞬时SNR: 红色 | 降噪SNR: 绿色")
+                print("实时降噪已启动 | 按 Q 键停止")
                 while self.running:
-                    if keyboard.is_pressed('q'):
-                        self.stop()
                     time.sleep(0.1)
         except Exception as e:
             self.stop()
 
     def stop(self):
-        """停止系统"""
+        """安全停止系统"""
         if not self.running:
             return
 
         self.running = False
-
-        # 关闭图形界面
-        if plt.fignum_exists(self.fig.number):
-            plt.close(self.fig)
-
-        # 结束线程
         for t in [self.audio_thread, self.process_thread]:
             if t and t.is_alive():
                 t.join(timeout=1)
-
         print("系统已安全关闭")
 
-
-# 用法示例
-if __name__ == "__main__":
-    processor = RealTimeProcessor()
-    try:
-        processor.start()
-    except KeyboardInterrupt:
-        processor.stop()
